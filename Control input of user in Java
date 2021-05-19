@@ -1,0 +1,229 @@
+
+Example 1: Validating positive ints
+Here's a simple example of using hasNextInt() to validate positive int from the input.
+
+Scanner sc = new Scanner(System.in);
+int number;
+do {
+    System.out.println("Please enter a positive number!");
+    while (!sc.hasNextInt()) {
+        System.out.println("That's not a number!");
+        sc.next(); // this is important!
+    }
+    number = sc.nextInt();
+} while (number <= 0);
+System.out.println("Thank you! Got " + number);
+Here's an example session:
+
+Please enter a positive number!
+five
+That's not a number!
+-3
+Please enter a positive number!
+5
+Thank you! Got 5
+
+Note how much easier Scanner.hasNextInt() is to use compared to the more verbose try/catch Integer.parseInt/NumberFormatException combo. By contract, a Scanner guarantees that if it hasNextInt(), then nextInt() will peacefully give you that int, and will not throw any NumberFormatException/InputMismatchException/NoSuchElementException.
+
+
+----------------
+Example 2: Multiple hasNextXXX on the same token
+Note that the snippet above contains a sc.next() statement to advance the Scanner until it hasNextInt(). It's important to realize that none of the hasNextXXX methods advance the Scanner past any input! You will find that if you omit this line from the snippet, then it'd go into an infinite loop on an invalid input!
+
+This has two consequences:
+
+If you need to skip the "garbage" input that fails your hasNextXXX test, then you need to advance the Scanner one way or another (e.g. next(), nextLine(), skip, etc).
+If one hasNextXXX test fails, you can still test if it perhaps hasNextYYY!
+Here's an example of performing multiple hasNextXXX tests.
+
+Scanner sc = new Scanner(System.in);
+while (!sc.hasNext("exit")) {
+    System.out.println(
+        sc.hasNextInt() ? "(int) " + sc.nextInt() :
+        sc.hasNextLong() ? "(long) " + sc.nextLong() :  
+        sc.hasNextDouble() ? "(double) " + sc.nextDouble() :
+        sc.hasNextBoolean() ? "(boolean) " + sc.nextBoolean() :
+        "(String) " + sc.next()
+    );
+}
+Here's an example session:
+
+5
+(int) 5
+false
+(boolean) false
+blah
+(String) blah
+1.1
+(double) 1.1
+100000000000
+(long) 100000000000
+exit
+
+Note that the order of the tests matters. If a Scanner hasNextInt(), then it also hasNextLong(), but it's not necessarily true the other way around. More often than not you'd want to do the more specific test before the more general test.	
+------------------------------------
+
+Example 3 : Validating vowels
+Scanner has many advanced features supported by regular expressions. Here's an example of using it to validate vowels.
+
+Scanner sc = new Scanner(System.in);
+System.out.println("Please enter a vowel, lowercase!");
+while (!sc.hasNext("[aeiou]")) {
+    System.out.println("That's not a vowel!");
+    sc.next();
+}
+String vowel = sc.next();
+System.out.println("Thank you! Got " + vowel);
+Here's an example session:
+
+Please enter a vowel, lowercase!
+5
+That's not a vowel!
+z
+That's not a vowel!
+e
+Thank you! Got e
+
+In regex, as a Java string literal, the pattern "[aeiou]" is what is called a "character class"; it matches any of the letters a, e, i, o, u. Note that it's trivial to make the above test case-insensitive: just provide such regex pattern to the Scanner.
+
+--------------------------------
+Overview of Scanner.hasNextXXX methods
+java.util.Scanner has many hasNextXXX methods that can be used to validate input. Here's a brief overview of all of them:
+
+hasNext() - does it have any token at all?
+hasNextLine() - does it have another line of input?
+For Java primitives
+hasNextInt() - does it have a token that can be parsed into an int?
+Also available are hasNextDouble(), hasNextFloat(), hasNextByte(), hasNextShort(), hasNextLong(), and hasNextBoolean()
+As bonus, there's also hasNextBigInteger() and hasNextBigDecimal()
+The integral types also has overloads to specify radix (for e.g. hexadecimal)
+Regular expression-based
+hasNext(String pattern)
+hasNext(Pattern pattern) is the Pattern.compile overload
+Scanner is capable of more, enabled by the fact that it's regex-based. One important feature is useDelimiter(String pattern), which lets you define what pattern separates your tokens. There are also find and skip methods that ignores delimiters.
+
+The following discussion will keep the regex as simple as possible, so the focus remains on Scanner.
+
+Example 1: Validating positive ints
+Here's a simple example of using hasNextInt() to validate positive int from the input.
+
+Scanner sc = new Scanner(System.in);
+int number;
+do {
+    System.out.println("Please enter a positive number!");
+    while (!sc.hasNextInt()) {
+        System.out.println("That's not a number!");
+        sc.next(); // this is important!
+    }
+    number = sc.nextInt();
+} while (number <= 0);
+System.out.println("Thank you! Got " + number);
+Here's an example session:
+
+Please enter a positive number!
+five
+That's not a number!
+-3
+Please enter a positive number!
+5
+Thank you! Got 5
+
+Note how much easier Scanner.hasNextInt() is to use compared to the more verbose try/catch Integer.parseInt/NumberFormatException combo. By contract, a Scanner guarantees that if it hasNextInt(), then nextInt() will peacefully give you that int, and will not throw any NumberFormatException/InputMismatchException/NoSuchElementException.
+
+Related questions
+How to use Scanner to accept only valid int as input
+How do I keep a scanner from throwing exceptions when the wrong type is entered? (java)
+Example 2: Multiple hasNextXXX on the same token
+Note that the snippet above contains a sc.next() statement to advance the Scanner until it hasNextInt(). It's important to realize that none of the hasNextXXX methods advance the Scanner past any input! You will find that if you omit this line from the snippet, then it'd go into an infinite loop on an invalid input!
+
+This has two consequences:
+
+If you need to skip the "garbage" input that fails your hasNextXXX test, then you need to advance the Scanner one way or another (e.g. next(), nextLine(), skip, etc).
+If one hasNextXXX test fails, you can still test if it perhaps hasNextYYY!
+Here's an example of performing multiple hasNextXXX tests.
+
+Scanner sc = new Scanner(System.in);
+while (!sc.hasNext("exit")) {
+    System.out.println(
+        sc.hasNextInt() ? "(int) " + sc.nextInt() :
+        sc.hasNextLong() ? "(long) " + sc.nextLong() :  
+        sc.hasNextDouble() ? "(double) " + sc.nextDouble() :
+        sc.hasNextBoolean() ? "(boolean) " + sc.nextBoolean() :
+        "(String) " + sc.next()
+    );
+}
+Here's an example session:
+
+5
+(int) 5
+false
+(boolean) false
+blah
+(String) blah
+1.1
+(double) 1.1
+100000000000
+(long) 100000000000
+exit
+
+Note that the order of the tests matters. If a Scanner hasNextInt(), then it also hasNextLong(), but it's not necessarily true the other way around. More often than not you'd want to do the more specific test before the more general test.
+
+Example 3 : Validating vowels
+Scanner has many advanced features supported by regular expressions. Here's an example of using it to validate vowels.
+
+Scanner sc = new Scanner(System.in);
+System.out.println("Please enter a vowel, lowercase!");
+while (!sc.hasNext("[aeiou]")) {
+    System.out.println("That's not a vowel!");
+    sc.next();
+}
+String vowel = sc.next();
+System.out.println("Thank you! Got " + vowel);
+Here's an example session:
+
+Please enter a vowel, lowercase!
+5
+That's not a vowel!
+z
+That's not a vowel!
+e
+Thank you! Got e
+
+In regex, as a Java string literal, the pattern "[aeiou]" is what is called a "character class"; it matches any of the letters a, e, i, o, u. Note that it's trivial to make the above test case-insensitive: just provide such regex pattern to the Scanner.
+
+API links
+hasNext(String pattern) - Returns true if the next token matches the pattern constructed from the specified string.
+java.util.regex.Pattern
+Related questions
+Reading a single char in Java
+References
+Java Tutorials/Essential Classes/Regular Expressions
+regular-expressions.info/Character Classes
+Example 4: Using two Scanner at once
+Sometimes you need to scan line-by-line, with multiple tokens on a line. The easiest way to accomplish this is to use two Scanner, where the second Scanner takes the nextLine() from the first Scanner as input. Here's an example:
+
+Scanner sc = new Scanner(System.in);
+System.out.println("Give me a bunch of numbers in a line (or 'exit')");
+while (!sc.hasNext("exit")) {
+    Scanner lineSc = new Scanner(sc.nextLine());
+    int sum = 0;
+    while (lineSc.hasNextInt()) {
+        sum += lineSc.nextInt();
+    }
+    System.out.println("Sum is " + sum);
+}
+Here's an example session:
+
+Give me a bunch of numbers in a line (or 'exit')
+3 4 5
+Sum is 12
+10 100 a million dollar
+Sum is 110
+wait what?
+Sum is 0
+exit
+
+In addition to Scanner(String) constructor, there's also Scanner(java.io.File) among others.
+
+
+Src: https://stackoverflow.com/questions/3059333/validating-input-using-java-util-scanner
